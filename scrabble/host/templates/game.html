@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Game:</h2>
+<div class=players>
+  {% for player in game['players'] %}
+    <div class=player>
+        <span>{{ player['name'] }}</span><span> {{ player['score'] }}</span>
+    </div>
+  {% endfor %}
+</div>
+<div class=board>
+  {% for row in game['board'] %}
+    <div class=row>
+      {% for square in row %}
+        <div class=square>
+          X
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+<div>
+<div class=bag>
+  {{ game['bag'] }}
+</div>
+{% endblock %}
