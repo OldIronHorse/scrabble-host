@@ -19,8 +19,8 @@ class User(db.Model):
 
 class Player(db.Model):
   #id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
-  game_id = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
+  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+  game_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
   tiles = db.Column(db.String(7))
   score = db.Column(db.Integer)
 
