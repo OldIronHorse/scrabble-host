@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+  <div class=actions>
+    <a href="{{ url_for('new_game') }}">New Game...<a/>
+  </div>
+  <h2>Games:</h2>
+  <div class=games>
+    {% for game in games %}
+      <div class=game>
+        <h3 href="{{ url_for('game', game_id=str(game['_id'])) }}">Game:</h3>
+        <div class=players>
+          {% for player in game['players'] %}
+            <div class=player>
+              <span>{{ player['name'] }}</span><span> {{ player['score'] }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+

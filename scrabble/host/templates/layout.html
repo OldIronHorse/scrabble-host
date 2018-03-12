@@ -9,6 +9,16 @@
   <body>
     <div class=page>
       <h1>Scrabble Host</h1>
+      {% if session['logged_in'] %}
+        <div>
+          <div>logged in as {{ session['logged_in'] }}, </div>
+          <a href="{{ url_for('logout') }}">log out</a>
+        </div>
+      {% else %}
+        <div>
+          <a href="{{ url_for('login') }}">log in</a>
+        </div>
+      {% endif %}
       {% block body %}
       {% endblock %}
     </div>

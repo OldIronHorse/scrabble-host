@@ -1,34 +1,45 @@
-from flask import Flask, redirect, render_template
-from scrabble.host.config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask import Flask, g, redirect, render_template, request, session,\
+  url_for
+from werkzeug.security import check_password_hash
+from pymongo import MongoClient
 from scrabble.game import fetch_games, fetch_game
 
 app = Flask(__name__)
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
-class User(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  username = db.Column(db.String(64), index=True, unique=True)
-  password_hash = db.Column(db.String(128))
+app.config.from_object(__name__)
+app.config.update(dict(
+  SECRET_KEY='develeopment key',
+  MONGO_DB_URI='mongodb://localhost:27017'))
 
-  def __repr__(self):
-    return '<User {}>'.format(self.username)
+def connect_db():
+  return MongoClient(app.config['MONGO_DB_URI']).scrabble
 
-class Player(db.Model):
-  #id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-  game_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-  tiles = db.Column(db.String(7))
-  score = db.Column(db.Integer)
+def get_db():
+  if not hasattr(g, 'scrabble_db'):
+    g.scrabble_db = connect_db()
+  return g.scrabble_db
 
-class Game(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  bag = db.Column(db.String(100))
-  board = db.Column(db.String(15 * 15))
+@app.shell_context_processor
+def make_app_shell_context():
+  return {'get_db': get_db}
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+  error = None
+  if request.method == 'POST':
+    user = get_db().users.find_one({'name': request.form['username']})
+    if user \
+        and check_password_hash(user['password_hash'], 
+                                request.form['password']):
+      session['logged_in'] = user['name']
+      return redirect(url_for('games'))
+    error='Invalid username and password combination'
+  return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+  session.pop('logged_in', None)
+  return redirect(url_for('games'))
 
 @app.route('/')
 def root():
@@ -36,8 +47,12 @@ def root():
 
 @app.route('/games')
 def games():
-  return render_template('games.html', games=fetch_games())
+  return render_template('games.html', games=get_db().games.find())
 
 @app.route('/games/<game_id>')
 def game(game_id):
-  return render_template('game.html', game=fetch_game(game_id))
+  return render_template('game.html', game=get_db().games.find_one(game_id))
+
+@app.route('/new_game', methods=['GET', 'POST'])
+def new_game():
+  pass
