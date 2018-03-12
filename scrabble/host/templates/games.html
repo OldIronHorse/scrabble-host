@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-  <div class=actions>
-    <a href="{{ url_for('new_game') }}">New Game...<a/>
-  </div>
+  {% if session['logged_in'] %}
+    <div class=actions>
+      <a href="{{ url_for('new_game') }}">New Game...<a/>
+    </div>
+  {% endif %}
   <h2>Games:</h2>
   <div class=games>
     {% for game in games %}

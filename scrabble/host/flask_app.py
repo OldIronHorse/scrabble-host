@@ -55,4 +55,4 @@ def game(game_id):
 
 @app.route('/new_game', methods=['GET', 'POST'])
 def new_game():
-  pass
+  return render_template('new_game.html')
