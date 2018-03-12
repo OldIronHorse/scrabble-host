@@ -4,6 +4,7 @@ body {
 
 .board {
   /*display: table;*/
+  font-family: monospace;
 }
 
 .row {
@@ -11,6 +12,7 @@ body {
 }
 
 .square {
+  background-color: lightgray;
   display: table-cell;
   padding: 5px;
 }

@@ -1,11 +1,34 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, redirect, render_template
+from scrabble.host.config import Config
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from scrabble.game import fetch_games, fetch_game
 
 app = Flask(__name__)
-app.config.from_object(__name__)
+app.config.from_object(Config)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-app.config.update(dict(
-  SECRET_KEY='development key'))
+class User(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  username = db.Column(db.String(64), index=True, unique=True)
+  password_hash = db.Column(db.String(128))
+
+  def __repr__(self):
+    return '<User {}>'.format(self.username)
+
+class Player(db.Model):
+  #id = db.Column(db.Integer, primary_key=True)
+  user_id = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
+  game_id = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
+  tiles = db.Column(db.String(7))
+  score = db.Column(db.Integer)
+
+class Game(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  bag = db.Column(db.String(100))
+  board = db.Column(db.String(15 * 15))
+
 
 @app.route('/')
 def root():

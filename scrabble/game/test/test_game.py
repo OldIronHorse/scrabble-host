@@ -11,8 +11,10 @@ class TestNewGame(TestCase):
         'players':[{
             'name': 'Player1',
             'score': 0,
+            'tiles': '',
           },{
             'name': 'Player2',
             'score': 0,
+            'tiles': '',
       }]}, 
       new_game(['Player1', 'Player2']))

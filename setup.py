@@ -12,6 +12,8 @@ setup(name='scrabble-host',
       packages=['scrabble.host'],
       install_requires=[
         'flask',
+        'flask-sqlalchemy',
+        'flask-migrate',
       ],
       test_suite='nose.collector',
       tests_require=['nose'],

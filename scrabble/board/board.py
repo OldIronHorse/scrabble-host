@@ -1,2 +1,2 @@
 def new_board():
-  return tuple(['               ' for row in range(0, 15)])
+  return tuple(['_______________' for row in range(0, 15)])

@@ -5,7 +5,7 @@ def new_game(players):
   return {
       'bag': new_bag(),
       'board': new_board(),
-      'players': [{'name': name, 'score': 0} for name in players],
+      'players': [{'name': name, 'score': 0, 'tiles': ''} for name in players],
     }
 
 games = {'1': new_game(['Player1', 'Player2'])}

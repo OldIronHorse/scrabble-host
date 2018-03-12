@@ -12,14 +12,9 @@
   {% for row in game['board'] %}
     <div class=row>
       {% for square in row %}
-        <div class=square>
-          X
-        </div>
+        <div class=square>{{ square }}</div>
       {% endfor %}
     </div>
   {% endfor %}
 <div>
-<div class=bag>
-  {{ game['bag'] }}
-</div>
 {% endblock %}

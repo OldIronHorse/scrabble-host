@@ -6,4 +6,4 @@ class TestNewBoard(TestCase):
     board = new_board()
     for row in range(0, 15):
       for col in range(0, 15):
-        self.assertEqual(' ', board[row][col])
+        self.assertEqual('_', board[row][col])
