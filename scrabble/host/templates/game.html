@@ -17,13 +17,15 @@
       {% endfor %}
     </div>
   {% endfor %}
+</div>
 <div>
-<div>
+  <div>
+    <span>your tiles: <span><span>{{ logged_in_player['tiles'] }}</span>
+  </div>
   Next player: {{ game['next_player'] }}
 </div>
 {% if session['logged_in'] == game['next_player'] %}
   <div> 
-    <span>tiles: <span><span>{{ logged_in_player['tiles'] }}</span>
     <form action="{{ url_for('game', game_id=game['_id']) }}" method=post>
     TODO: play tiles form goes here...
       <input type=submit value=Play>
