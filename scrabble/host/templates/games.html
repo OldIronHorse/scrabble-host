@@ -1,16 +1,23 @@
 {% extends "layout.html" %}
 {% block body %}
   <div class=actions>
-    <a href="{{ url_for('new_game') }}">New Game...<a/>
+    <a href="{{ url_for('create_game') }}">New Game...<a/>
   </div>
   <h2>Games:</h2>
   <div class=games>
     {% for game in games %}
       <div class=game>
-        <h3 href="{{ url_for('game', game_id=str(game['_id'])) }}">Game:</h3>
+        <h3>
+          <a href="{{ url_for('game', game_id=game['_id']) }}">
+            Game: {{ game['_id'] }}
+          </a>
+        </h3>
         <div class=players>
           {% for player in game['players'] %}
             <div class=player>
+              {% if player['name'] == game['next_player'] %}
+                <span>* </span>
+              {% endif %}
               <span>{{ player['name'] }}</span><span> {{ player['score'] }}</span>
             </div>
           {% endfor %}

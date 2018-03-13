@@ -17,4 +17,12 @@
     </div>
   {% endfor %}
 <div>
+<div>
+  Next player: {{ game['next_player'] }}
+</div>
+{% if session['logged_in'] == game['next_player'] %}
+  <div>
+    TODO: play tiles form goes here...
+  </div>
+{% endif %}
 {% endblock %}

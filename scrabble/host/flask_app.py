@@ -2,7 +2,9 @@ from flask import Flask, g, redirect, render_template, request, session,\
   url_for
 from werkzeug.security import check_password_hash
 from pymongo import MongoClient
-from scrabble.game import fetch_games, fetch_game
+from bson.objectid import ObjectId
+from random import choice
+from scrabble.game import new_game
 
 app = Flask(__name__)
 
@@ -51,8 +53,15 @@ def games():
 
 @app.route('/games/<game_id>')
 def game(game_id):
-  return render_template('game.html', game=get_db().games.find_one(game_id))
+  return render_template('game.html', 
+                         game=get_db().games.find_one(ObjectId(game_id)))
 
 @app.route('/new_game', methods=['GET', 'POST'])
-def new_game():
-  pass
+def create_game():
+  if request.method == 'POST':
+    other = choice(list(
+        get_db().users.find({'name': {'$ne': session['logged_in']}})))
+    result = get_db().games.insert_one(new_game([session['logged_in'], 
+                                               other['name']]))
+    return redirect(url_for('game', game_id=str(result.inserted_id)))
+  return render_template('new_game.html')
