@@ -4,7 +4,8 @@
 <div class=players>
   {% for player in game['players'] %}
     <div class=player>
-        <span>{{ player['name'] }}</span><span> {{ player['score'] }}</span>
+        <span>{{ player['name'] }}</span>
+        <span> {{ player['score'] }}</span>
     </div>
   {% endfor %}
 </div>
@@ -21,8 +22,12 @@
   Next player: {{ game['next_player'] }}
 </div>
 {% if session['logged_in'] == game['next_player'] %}
-  <div>
+  <div> 
+    <span>tiles: <span><span>{{ logged_in_player['tiles'] }}</span>
+    <form action="{{ url_for('game', game_id=game['_id']) }}" method=post>
     TODO: play tiles form goes here...
+      <input type=submit value=Play>
+    </form>
   </div>
 {% endif %}
 {% endblock %}

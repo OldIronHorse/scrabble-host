@@ -1,6 +1,6 @@
 from itertools import repeat
 
-bag = ''.join(map(''.join, [repeat('a',9), 
+bag = ''.join(sum(map(list, [repeat('a',9), 
                             repeat('b',2),
                             repeat('c',2),
                             repeat('d',4),
@@ -27,7 +27,7 @@ bag = ''.join(map(''.join, [repeat('a',9),
                             repeat('y',2),
                             repeat('z',1),
                             repeat('*',2),
-                            ]))
+                            ]), []))
 
 def new_bag():
   return bag

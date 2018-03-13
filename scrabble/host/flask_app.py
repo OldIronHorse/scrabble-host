@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import choice
-from scrabble.game import new_game
+from scrabble.game import new_game, draw_tiles
 
 app = Flask(__name__)
 
@@ -51,10 +51,17 @@ def root():
 def games():
   return render_template('games.html', games=get_db().games.find())
 
-@app.route('/games/<game_id>')
+@app.route('/games/<game_id>', methods=['GET', 'POST'])
 def game(game_id):
-  return render_template('game.html', 
-                         game=get_db().games.find_one(ObjectId(game_id)))
+  game = get_db().games.find_one(ObjectId(game_id))
+  logged_in_player = [player for player 
+                      in game['players'] 
+                      if session['logged_in'] == player['name']][0]
+  draw_tiles(game)
+  get_db().games.replace_one({'_id': game['_id']}, game)
+  if request.method == 'POST':
+    pass
+  return render_template('game.html', game=game, logged_in_player=logged_in_player)
 
 @app.route('/new_game', methods=['GET', 'POST'])
 def create_game():
