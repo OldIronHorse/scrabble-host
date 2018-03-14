@@ -10,10 +10,17 @@
   {% endfor %}
 </div>
 <div class=board>
-  {% for row in game['board'] %}
+  <div class=row>
+    <div class="square header"></div>
+    {% for c in range(0,15) %}
+      <div class="square header">{{ c }}</div>
+    {% endfor %}
+  </div>
+  {% for r in range(0,15) %}
     <div class=row>
-      {% for square in row %}
-        <div class=square>{{ square }}</div>
+      <div class="square header">{{ r }}</div>
+      {% for square in game['board'][r] %}
+        <div class="square tile">{{ square }}</div>
       {% endfor %}
     </div>
   {% endfor %}
@@ -27,7 +34,25 @@
 {% if session['logged_in'] == game['next_player'] %}
   <div> 
     <form action="{{ url_for('game', game_id=game['_id']) }}" method=post>
-    TODO: play tiles form goes here...
+      row:
+      <select name="row">
+        {% for r in range(0,15) %}
+          <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+      </select>
+      column:
+      <select name="column">
+        {% for c in range(0,15) %}
+          <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+      </select>
+      direction:
+      <select>
+        <option value="across">across<option>
+        <option value="down">down</option>
+      </select>
+      tiles:
+      <input type=text name='tiles'>
       <input type=submit value=Play>
     </form>
   </div>

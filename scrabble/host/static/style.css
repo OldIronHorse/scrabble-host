@@ -12,7 +12,15 @@ body {
 }
 
 .square {
-  background-color: lightgray;
   display: table-cell;
+  width: 2em;
   padding: 5px;
+}
+
+.tile {
+  background-color: lightgray;
+}
+
+.header {
+  background-color: white;
 }
