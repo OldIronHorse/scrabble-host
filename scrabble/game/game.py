@@ -20,3 +20,6 @@ def draw_tiles(game):
   game['bag'] = ''.join(bag)
   player['tiles'] += game['bag'][:to_draw]
   game['bag'] = game['bag'][to_draw:]
+
+def play_tiles(game, player, start, direction, tiles):
+  pass

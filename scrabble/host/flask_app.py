@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import choice
-from scrabble.game import new_game, draw_tiles
+from scrabble.game import new_game, draw_tiles, play_tiles
 
 app = Flask(__name__)
 
@@ -59,9 +59,19 @@ def game(game_id):
                       if session['logged_in'] == player['name']][0]
   draw_tiles(game)
   get_db().games.replace_one({'_id': game['_id']}, game)
-  if request.method == 'POST':
-    pass
-  return render_template('game.html', game=game, logged_in_player=logged_in_player)
+  if request.method == 'GET':
+    return render_template('game.html', 
+                           game=game, 
+                           logged_in_player=logged_in_player)
+  else:
+    print('/games/', game_id, 'request.form:', request.form)
+    play_tiles(game, 
+               session['logged_in'], 
+               (request.form['row'], request.form['column']),
+               request.form['direction'],
+               request.form['tiles'])
+    get_db().games.replace_one({'_id': game['_id']}, game)
+    return redirect(url_for('game', game_id=str(game['_id'])))
 
 @app.route('/new_game', methods=['GET', 'POST'])
 def create_game():
