@@ -64,10 +64,9 @@ def game(game_id):
                            game=game, 
                            logged_in_player=logged_in_player)
   else:
-    print('/games/', game_id, 'request.form:', request.form)
     play_tiles(game, 
                session['logged_in'], 
-               (request.form['row'], request.form['column']),
+               (int(request.form['row']), int(request.form['column'])),
                request.form['direction'],
                request.form['tiles'])
     get_db().games.replace_one({'_id': game['_id']}, game)
