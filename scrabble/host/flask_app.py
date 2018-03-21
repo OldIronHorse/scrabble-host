@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import choice
 from scrabble.game import new_game, draw_tiles, play_tiles
+from scrabble.db import game_from_db, game_to_db
 
 app = Flask(__name__)
 
@@ -49,35 +50,43 @@ def root():
 
 @app.route('/games')
 def games():
-  return render_template('games.html', games=get_db().games.find())
+  return render_template('games.html', 
+                         games=[(g['_id'], game_from_db(g))
+                                for g
+                                in get_db().games.find()])
 
 @app.route('/games/<game_id>', methods=['GET', 'POST'])
 def game(game_id):
-  game = get_db().games.find_one(ObjectId(game_id))
-  logged_in_player = [player for player 
-                      in game['players'] 
-                      if session['logged_in'] == player['name']][0]
-  draw_tiles(game)
-  get_db().games.replace_one({'_id': game['_id']}, game)
+  g0 = game_from_db(get_db().games.find_one(ObjectId(game_id)))
+  g1 = draw_tiles(g0)
+  get_db().games.replace_one({'_id': ObjectId(game_id)}, game_to_db(g1))
   if request.method == 'GET':
     return render_template('game.html', 
-                           game=game, 
-                           logged_in_player=logged_in_player)
+                       game=g0,
+                       game_id=game_id,
+                       logged_in_player=[p for p 
+                                         in g1.players
+                                         if p.name == session['logged_in']][0]) 
   else:
-    play_tiles(game, 
-               session['logged_in'], 
-               (int(request.form['row']), int(request.form['column'])),
-               request.form['direction'],
-               request.form['tiles'])
-    get_db().games.replace_one({'_id': game['_id']}, game)
-    return redirect(url_for('game', game_id=str(game['_id'])))
+    try:
+      g2 = play_tiles(g1, 
+                      (int(request.form['row']), int(request.form['column'])),
+                      request.form['direction'],
+                      request.form['tiles'])
+    except ValueError:
+      g2 = g1._replace(next_player=(0 if g1.next_player == len(g1.players) - 1 
+                                      else g1.next_player + 1))
+      print(g1)
+      print(g2)
+    get_db().games.replace_one({'_id': ObjectId(game_id)}, game_to_db(g2))
+    return redirect(url_for('game', game_id=game_id))
 
 @app.route('/new_game', methods=['GET', 'POST'])
 def create_game():
   if request.method == 'POST':
     other = choice(list(
         get_db().users.find({'name': {'$ne': session['logged_in']}})))
-    result = get_db().games.insert_one(new_game([session['logged_in'], 
-                                               other['name']]))
+    result = get_db().games.insert_one(game_to_db(new_game([session['logged_in'], 
+                                               other['name']])))
     return redirect(url_for('game', game_id=str(result.inserted_id)))
   return render_template('new_game.html')

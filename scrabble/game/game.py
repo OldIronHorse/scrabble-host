@@ -26,16 +26,24 @@ def draw_tiles(game):
 
 def add_across(board, start, word):
   r, c = start
+  row = board[r]
+  letters = list(word)
+  new_row = ''
+  for i in range(0, len(row)):
+    if i >= c and letters and row[i] == '_':
+      new_row += letters[0]
+      letters = letters[1:]
+    else:
+      new_row += row[i]
   return board[:r] \
-         + (board[r][:c] + word + board[r][c + len(word):],) \
+         + (new_row,) \
          + board[r + 1:]
   
 def add_down(board, start,word):
   r, c = start
-  word_as_column = ' ' * r + word + ' ' * (15 - r - len(word))
-  return tuple([row[:c] + l + row[c + 1:] if row[c] == '_' else row 
-                for row, l 
-                in zip(board, word_as_column)])
+  return tuple([''.join(row) 
+                for row
+                in zip(*add_across(tuple(zip(*board)), (c, r), word))])
 
 add_fns = {
   'across': add_across,
@@ -44,6 +52,8 @@ add_fns = {
 
 def play_tiles(game, start, direction, word):
   board = add_fns[direction](game.board, start, word)
+  #TODO: is the new board a valid arrangement?
+  #TODO: are all the words on the new board valid?
   tiles = list(game.players[game.next_player].tiles)
   for l in word:
     tiles.remove(l)

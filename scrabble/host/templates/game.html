@@ -2,10 +2,10 @@
 {% block body %}
 <h2>Game:</h2>
 <div class=players>
-  {% for player in game['players'] %}
+  {% for player in game.players %}
     <div class=player>
-        <span>{{ player['name'] }}</span>
-        <span> {{ player['score'] }}</span>
+        <span>{{ player.name }}</span>
+        <span> {{ player.score }}</span>
     </div>
   {% endfor %}
 </div>
@@ -19,7 +19,7 @@
   {% for r in range(0,15) %}
     <div class=row>
       <div class="square header">{{ r }}</div>
-      {% for square in game['board'][r] %}
+      {% for square in game.board[r] %}
         <div class="square tile">{{ square }}</div>
       {% endfor %}
     </div>
@@ -29,11 +29,11 @@
   <div>
     <span>your tiles: <span><span>{{ logged_in_player['tiles'] }}</span>
   </div>
-  Next player: {{ game['players'][game['next_player']]['name'] }}
+  Next player: {{ game.players[game.next_player].name }}
 </div>
-{% if session['logged_in'] == game['players'][game['next_player']]['name'] %}
+{% if session['logged_in'] == game.players[game.next_player].name %}
   <div> 
-    <form action="{{ url_for('game', game_id=game['_id']) }}" method=post>
+    <form action="{{ url_for('game', game_id=game_id) }}" method=post>
       row:
       <select name="row">
         {% for r in range(0,15) %}

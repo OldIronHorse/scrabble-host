@@ -7,20 +7,20 @@
   {% endif %}
   <h2>Games:</h2>
   <div class=games>
-    {% for game in games %}
+    {% for id, game in games %}
       <div class=game>
         <h3>
-          <a href="{{ url_for('game', game_id=game['_id']) }}">
-            Game: {{ game['_id'] }}
+          <a href="{{ url_for('game', game_id=id) }}">
+            Game: {{ id }}
           </a>
         </h3>
         <div class=players>
-          {% for player in game['players'] %}
+          {% for player in game.players %}
             <div class=player>
-              {% if player['name'] == game['next_player'] %}
+              {% if player == game.players[game.next_player] %}
                 <span>* </span>
               {% endif %}
-              <span>{{ player['name'] }}</span><span> {{ player['score'] }}</span>
+              <span>{{ player.name }}</span><span> {{ player.score }}</span>
             </div>
           {% endfor %}
         </div>
